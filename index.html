@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ábrelo</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="scene" id="scene">
+      <svg class="stars" id="starsLayer" viewBox="0 0 1000 600" preserveAspectRatio="none"></svg>
+
+      <div class="fireflies" id="firefliesLayer"></div>
+
+      <div id="garden" class="garden" aria-hidden="true"></div>
+
+      <button id="openBtn" class="open-btn" type="button">
+        <span class="open-btn__glow"></span>
+        <span class="open-btn__ring"></span>
+        <span class="open-btn__label">Ábrelo</span>
+      </button>
+
+      <button id="resetBtn" class="reset-btn" type="button" aria-label="Reiniciar" hidden>
+        <svg viewBox="0 0 24 24" width="16" height="16">
+          <path
+            d="M4 4v6h6M20 20v-6h-6M5.6 15A8 8 0 1 0 6 9"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,462 @@
+@property --boost {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 1;
+}
+
+@property --fly-boost {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 1;
+}
+
+:root {
+  --petal: #ffd452;
+  --petal-seam: #d99a00;
+  --leaf: #4f9a82;
+  --leaf-dark: #3a7a68;
+  --stem: #3f6b52;
+  --night-top: #060a16;
+  --night-bottom: #0d1730;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: 'Segoe UI', 'Trebuchet MS', system-ui, sans-serif;
+  overflow: hidden;
+  background: var(--night-bottom);
+}
+
+.scene {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background:
+    radial-gradient(ellipse at 50% 100%, rgba(30, 45, 40, 0.55) 0%, rgba(30, 45, 40, 0) 45%),
+    linear-gradient(to bottom, var(--night-top) 0%, var(--night-bottom) 100%);
+  overflow: hidden;
+  --boost: 1;
+  --fly-boost: 1;
+  transition:
+    --boost 1.4s ease,
+    --fly-boost 1.4s ease;
+}
+
+.scene.is-open {
+  --boost: 1.9;
+  --fly-boost: 2.4;
+}
+
+/* --- Stars / constellations --- */
+
+.stars {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.star {
+  fill: #eaf3ff;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: twinkle var(--dur, 3s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: calc(var(--op-min, 0.2) * var(--boost));
+    transform: scale(0.75);
+  }
+  50% {
+    opacity: min(calc(var(--op-max, 0.85) * var(--boost)), 1);
+    transform: scale(1.3);
+  }
+}
+
+.constellation-line {
+  fill: none;
+  stroke: #9fc0ff;
+  stroke-width: 1;
+  opacity: calc(0.16 * var(--boost));
+  transition: opacity 1.2s ease;
+}
+
+/* --- Fireflies --- */
+
+.fireflies {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.firefly {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  animation: drift var(--dur, 9s) ease-in-out infinite alternate;
+  animation-delay: var(--delay, 0s);
+}
+
+@keyframes drift {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(var(--dx), var(--dy));
+  }
+}
+
+.firefly__core {
+  width: var(--size, 6px);
+  height: var(--size, 6px);
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff6c8 0%, #ffe36b 45%, rgba(255, 227, 107, 0) 75%);
+  box-shadow: 0 0 6px 2px rgba(255, 227, 120, 0.55);
+  animation: blink var(--blink-dur, 3.4s) ease-in-out infinite;
+  animation-delay: var(--blink-delay, 0s);
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: calc(var(--op-base, 0.4) * var(--fly-boost) * 0.6);
+    transform: scale(0.75);
+    filter: drop-shadow(0 0 calc(2px * var(--fly-boost))) rgba(255, 225, 110, 0.7);
+  }
+  50% {
+    opacity: min(calc(var(--op-base, 0.4) * var(--fly-boost) * 1.4), 1);
+    transform: scale(1.3);
+  }
+}
+
+/* --- Center button --- */
+
+.open-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  color: #3a2a06;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  background: radial-gradient(circle at 38% 32%, #fff6d0, #ffd452 55%, #e8a400 100%);
+  box-shadow:
+    0 0 40px 6px rgba(255, 212, 82, 0.35),
+    inset 0 2px 8px rgba(255, 255, 255, 0.65);
+  animation: floatBtn 3.4s ease-in-out infinite;
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
+  z-index: 5;
+}
+
+.open-btn.is-hidden {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.6);
+  pointer-events: none;
+}
+
+.open-btn:hover {
+  filter: brightness(1.06);
+}
+
+.open-btn:active {
+  transform: translate(-50%, -50%) scale(0.93);
+}
+
+.open-btn__glow {
+  position: absolute;
+  inset: -30px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 212, 82, 0.28) 0%, rgba(255, 212, 82, 0) 70%);
+  animation: glowPulse 3.4s ease-in-out infinite;
+  z-index: -1;
+}
+
+@keyframes glowPulse {
+  0%,
+  100% {
+    opacity: 0.7;
+    transform: scale(0.92);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+.open-btn__ring {
+  position: absolute;
+  inset: -16px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 227, 140, 0.45);
+  animation: ringPulse 2.6s ease-out infinite;
+}
+
+@keyframes ringPulse {
+  0% {
+    transform: scale(0.82);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1.45);
+    opacity: 0;
+  }
+}
+
+@keyframes floatBtn {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) translateY(0);
+  }
+  50% {
+    transform: translate(-50%, -50%) translateY(-7px);
+  }
+}
+
+.reset-btn {
+  position: absolute;
+  bottom: 22px;
+  right: 22px;
+  transform: translateY(16px);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 227, 140, 0.35);
+  border-radius: 50%;
+  background: rgba(20, 24, 40, 0.55);
+  color: #ffe38b;
+  cursor: pointer;
+  opacity: 0;
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease,
+    background 0.2s ease;
+  z-index: 5;
+}
+
+.reset-btn.is-visible {
+  opacity: 0.85;
+  transform: translateY(0);
+}
+
+.reset-btn:hover {
+  opacity: 1;
+  background: rgba(30, 36, 58, 0.75);
+}
+
+/* --- Flowers --- */
+
+.garden {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 46vh;
+  pointer-events: none;
+}
+
+.flower {
+  position: absolute;
+  bottom: 0;
+  transform: translateX(-50%);
+  transform-origin: bottom center;
+}
+
+.flower__svg {
+  display: block;
+  overflow: visible;
+}
+
+.flower__shadow {
+  fill: #000;
+  opacity: 0.28;
+}
+
+.flower__stem {
+  fill: none;
+  stroke: var(--stem);
+  stroke-width: 3.6;
+  stroke-linecap: round;
+}
+
+.flower__leaf {
+  fill: var(--leaf);
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.flower__head {
+  --ox: 0px;
+  --oy: 0px;
+}
+
+.flower__disc--outer {
+  fill: #6b3f16;
+}
+
+.flower__disc--inner {
+  fill: #4a2a0e;
+  opacity: 0.85;
+}
+
+.flower__disc--seed {
+  fill: #3a2109;
+  opacity: 0.8;
+}
+
+.flower__disc {
+  opacity: 0;
+  transform-box: view-box;
+  transform-origin: var(--ox) var(--oy);
+}
+
+.flower__petal {
+  fill: var(--petal-color, var(--petal));
+  opacity: 0;
+  transform-box: view-box;
+  transform-origin: var(--ox) var(--oy);
+}
+
+.flower.is-growing .flower__stem {
+  animation: growStem var(--grow-duration, 1s) ease-out forwards;
+  animation-delay: var(--delay, 0s);
+}
+
+.flower.is-growing .flower__leaf {
+  animation: leafPop 0.55s ease-out forwards;
+  animation-delay: calc(var(--delay, 0s) + var(--grow-duration, 1s) * 0.5);
+}
+
+.flower.is-growing .flower__disc {
+  animation: discPop 0.4s ease-out forwards;
+  animation-delay: calc(var(--delay, 0s) + var(--grow-duration, 1s) * 0.78);
+}
+
+.flower.is-growing .flower__petal {
+  animation: petalOpen 0.6s cubic-bezier(0.3, 1.4, 0.5, 1) forwards;
+  animation-delay: calc(
+    var(--delay, 0s) + var(--grow-duration, 1s) * 0.8 + var(--petal-stagger, 0s)
+  );
+}
+
+.flower.is-swaying .flower__svg {
+  animation: sway var(--sway-duration, 4.5s) ease-in-out infinite;
+  animation-delay: var(--sway-delay, 0s);
+  transform-box: fill-box;
+  transform-origin: bottom center;
+}
+
+@keyframes growStem {
+  from {
+    stroke-dashoffset: var(--stem-length);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes leafPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes discPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.15);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes petalOpen {
+  0% {
+    opacity: 0;
+    transform: scale(0.05) rotate(-16deg);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.1) rotate(5deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes sway {
+  0%,
+  100% {
+    transform: rotate(-2deg);
+  }
+  50% {
+    transform: rotate(2deg);
+  }
+}
+
+/* --- Sparkles on click --- */
+
+.sparkle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #ffe98f;
+  pointer-events: none;
+  animation: sparkleFly 1s ease-out forwards;
+}
+
+@keyframes sparkleFly {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) translate(0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) translate(var(--sx), var(--sy)) scale(0.3);
+  }
+}
+
+@media (max-width: 480px) {
+  .open-btn {
+    width: 104px;
+    height: 104px;
+    font-size: 16px;
+  }
+}
